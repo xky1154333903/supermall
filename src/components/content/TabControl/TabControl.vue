@@ -42,6 +42,7 @@ export default {
   font-size: 15px;
   height: 40px;
   line-height: 40px;
+  background-color: #ffffff;
 }
 .tab-contral-item {
   flex: 1;
@@ -53,6 +54,6 @@ export default {
   color: var(--color-high-text);
 }
 .active span {
-  border-bottom: 3px solid var(--color-tint);
+  border-bottom: 3px solid #fb7299;
 }
 </style>
