@@ -1,12 +1,17 @@
 <template>
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
-    <home-swiper :banners="banners" />
-    <recommend-view :recommends="recommends" />
-    <feature-view />
-    <tab-control class="tab-control" :titles="['流行', '新款', '精选']" />
-    <goods-list :goods="goods['pop'].list" />
-    <good-list-item />
+    <scroll class="content">
+      <home-swiper :banners="banners" />
+      <recommend-view :recommends="recommends" />
+      <feature-view />
+      <tab-control
+        class="tab-control"
+        :titles="['流行', '新款', '精选']"
+        @tabClick="tabClick"
+      />
+      <goods-list :goods="showGoods" />
+    </scroll>
   </div>
 </template>
 
@@ -17,32 +22,40 @@ import FeatureView from "./childComps/FeatureView";
 
 import NavBar from "components/common/navbar/NavBar";
 import TabControl from "../../components/content/TabControl/TabControl.vue";
-import GoodListItem from "components/content/Goods/GoodListItem.vue";
+import GoodsList from "components/content/Goods/GoodsList.vue";
+import Scroll from "components/common/scroll/scroll";
 
 import { getHomeMultidata, getHomeGoods } from "network/home";
-import GoodsList from "components/content/Goods/GoodsList.vue";
 
 export default {
   name: "Home",
+
   components: {
     HomeSwiper,
     RecommendView,
     FeatureView,
     NavBar,
     TabControl,
-    GoodListItem,
     GoodsList,
+    Scroll,
   },
+
   data() {
     return {
       banners: [],
       recommends: [],
       goods: {
         pop: { page: 0, list: [] },
-        news: { page: 0, list: [] },
+        new: { page: 0, list: [] },
         sell: { page: 0, list: [] },
       },
+      currentType: "pop",
     };
+  },
+  computed: {
+    showGoods() {
+      return this.goods[this.currentType].list;
+    },
   },
   created() {
     // 1.请求多个数据
@@ -52,7 +65,23 @@ export default {
     this.getHomeGoods("new");
     this.getHomeGoods("sell");
   },
+
   methods: {
+    // 事件监听
+    tabClick(index) {
+      switch (index) {
+        case 0:
+          this.currentType = "pop";
+          break;
+        case 1:
+          this.currentType = "new";
+          break;
+        case 2:
+          this.currentType = "sell";
+          break;
+      }
+    },
+    // 网络请求
     getHomeMultidata() {
       getHomeMultidata().then((res) => {
         // this.result = res;
@@ -73,6 +102,7 @@ export default {
 
 <style scoped>
 #home {
+  height: 100vh;
   padding-bottom: 44px;
 }
 .home-nav {
@@ -83,6 +113,14 @@ export default {
   z-index: 9;
   background-color: var(--color-tint);
   color: #fff;
+}
+.content {
+  overflow: hidden;
+  position: absolute;
+  top: 44px;
+  bottom: 49px;
+  left: 0;
+  right: 0;
 }
 .tab-control {
   position: sticky;
