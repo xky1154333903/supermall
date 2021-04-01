@@ -1,7 +1,15 @@
 <template>
   <div id="home">
     <nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
-    <scroll class="content">
+
+    <scroll
+      class="content"
+      ref="scroll"
+      :probe-type="3"
+      @scroll="contentScroll"
+      :pull-up-load="true"
+      @pullingUp="loadMore"
+    >
       <home-swiper :banners="banners" />
       <recommend-view :recommends="recommends" />
       <feature-view />
@@ -12,6 +20,8 @@
       />
       <goods-list :goods="showGoods" />
     </scroll>
+
+    <back-top @click.native="backClick" v-show="isShowBackTop" />
   </div>
 </template>
 
@@ -24,6 +34,7 @@ import NavBar from "components/common/navbar/NavBar";
 import TabControl from "../../components/content/TabControl/TabControl.vue";
 import GoodsList from "components/content/Goods/GoodsList.vue";
 import Scroll from "components/common/scroll/scroll";
+import BackTop from "components/content/backTop/backTop";
 
 import { getHomeMultidata, getHomeGoods } from "network/home";
 
@@ -38,6 +49,7 @@ export default {
     TabControl,
     GoodsList,
     Scroll,
+    BackTop,
   },
 
   data() {
@@ -50,6 +62,7 @@ export default {
         sell: { page: 0, list: [] },
       },
       currentType: "pop",
+      isShowBackTop: false,
     };
   },
   computed: {
@@ -81,6 +94,19 @@ export default {
           break;
       }
     },
+    backClick() {
+      //x,y,time
+      this.$refs.scroll.scrollTo(0, 0);
+    },
+    contentScroll(position) {
+      //返回顶部的影藏和显示
+      this.isShowBackTop = -position.y > 1000;
+    },
+    loadMore() {
+      this.getHomeGoods(this.currentType);
+      //解决低版本better-scroll对于页面高度计算错误的问题
+      this.$refs.scroll.scroll.refresh();
+    },
     // 网络请求
     getHomeMultidata() {
       getHomeMultidata().then((res) => {
@@ -94,6 +120,8 @@ export default {
       getHomeGoods(type, page).then((res) => {
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1;
+        //better-scroll刷新
+        this.$refs.scroll.finishPullUp;
       });
     },
   },
@@ -116,6 +144,7 @@ export default {
 }
 .content {
   overflow: hidden;
+
   position: absolute;
   top: 44px;
   bottom: 49px;
