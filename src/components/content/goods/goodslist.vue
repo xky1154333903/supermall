@@ -1,13 +1,17 @@
- <template>
+<template>
   <div class="goods">
-    <goods-list-item v-for="item in goods" :key="item.id" :goods-item="item" />
+    <goods-list-item
+      v-for="item in goods"
+      :key="item.id"
+      :goods-item="item"
+    ></goods-list-item>
   </div>
 </template>
 
 <script>
 import GoodsListItem from "./GoodListItem";
 export default {
-  name: "GoodsList",
+  name: "GoodList",
   components: {
     GoodsListItem,
   },
@@ -22,7 +26,7 @@ export default {
 };
 </script>
 
-<style  scoped>
+<style>
 .goods {
   display: flex;
   flex-wrap: wrap;

@@ -7,6 +7,8 @@
       <detail-shop-info :shop="shop" />
       <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoad" />
       <detail-param-info :paramInfo="paramInfo" />
+      <detail-comment-info :comment-info="commentInfo" />
+      <goods-list :goods="recommends" />
     </scroll>
   </div>
 </template>
@@ -16,12 +18,20 @@ import DetailNavBar from "./childComps/DetailNavBar";
 import DetailSwiper from "./childComps/DetailSwiper";
 import DetailBaseInfo from "./childComps/DetailBaseInfo";
 import DetailShopInfo from "./childComps/DetailShopInfo";
-import { getDetail, Goods, Shop, GoodsParam } from "network/detail.js";
+import {
+  getDetail,
+  Goods,
+  Shop,
+  GoodsParam,
+  getRecommend,
+} from "network/detail.js";
 import DetailGoodsInfo from "./childComps/DetailGoodsInfo";
 import DetailParamInfo from "./childComps/DetailParamInfo";
-
+import DetailCommentInfo from "./childComps/DetailCommentInfo";
 import Scroll from "components/common/scroll/scroll";
+import GoodsList from "components/content/Goods/GoodsList";
 
+import { itemListenerMixin } from "../../common/mixin";
 export default {
   name: "Detail",
   components: {
@@ -32,8 +42,10 @@ export default {
     Scroll,
     DetailGoodsInfo,
     DetailParamInfo,
+    DetailCommentInfo,
+    GoodsList,
   },
-
+  mixins: [itemListenerMixin],
   data() {
     return {
       iid: null,
@@ -42,14 +54,16 @@ export default {
       shop: {},
       detailInfo: {},
       paramInfo: {},
+      commentInfo: {},
+      recommends: {},
     };
   },
 
   created() {
+    // 获取iid
     this.iid = this.$route.params.iid;
-
+    // 请求详情数据
     getDetail(this.iid).then((res) => {
-      console.log(res);
       const data = res.result;
       this.topImages = data.itemInfo.topImages;
       this.goods = new Goods(
@@ -66,14 +80,26 @@ export default {
         data.itemParams.info,
         data.itemParams.rule
       );
+      if (data.rate.cRate !== 0) this.commentInfo = data.rate.list[0];
+    });
+    //请求推荐数据
+    getRecommend().then((res) => {
+      this.recommends = res.data.list;
     });
   },
+
+  destroyed() {
+    this.$bus.$off("itemImgLoad", this.itemImgListener);
+  },
+
   methods: {
     imageLoad() {
       this.$refs.scroll.refresh();
       // this.getThemeTopY();
     },
   },
+
+  mounted() {},
 };
 </script>
 

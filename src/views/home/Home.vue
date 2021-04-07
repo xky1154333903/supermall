@@ -43,9 +43,9 @@ import TabControl from "../../components/content/TabControl/TabControl.vue";
 import GoodsList from "components/content/Goods/GoodsList.vue";
 import Scroll from "components/common/scroll/scroll";
 import BackTop from "components/content/backTop/backTop";
-
-import { getHomeMultidata, getHomeGoods } from "network/home";
 import { debounce } from "common/utils.js";
+import { getHomeMultidata, getHomeGoods } from "network/home";
+import { itemListenerMixin } from "../../common/mixin";
 export default {
   name: "Home",
 
@@ -59,7 +59,7 @@ export default {
     Scroll,
     BackTop,
   },
-
+  mixins: [itemListenerMixin],
   data() {
     return {
       banners: [],
@@ -87,6 +87,7 @@ export default {
   },
   deactivated() {
     this.saveY = this.$refs.scroll.getscrollY();
+    this.$bus.$off("itemImgLoad", this.itemImgListener);
   },
   created() {
     // 1.请求多个数据
@@ -97,13 +98,7 @@ export default {
     this.getHomeGoods("new");
     this.getHomeGoods("sell");
   },
-  mounted() {
-    //1.监听img图片加载完成
-    const refresh = debounce(this.$refs.scroll.refresh, 500);
-    this.$bus.$on("itemImgLoad", () => {
-      refresh();
-    });
-  },
+  mounted() {},
   methods: {
     // 事件监听
     tabClick(index) {
