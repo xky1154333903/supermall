@@ -1,10 +1,10 @@
 <template>
   <div id="detail">
-    <ul>
+    <!-- <ul>
       <li v-for="(item, index) in $store.state.cartlist" :key="index">
         {{ item }}
       </li>
-    </ul>
+    </ul> -->
     <detail-nav-bar class="detail-nav" @titleClick="titleClick" ref="nav">
     </detail-nav-bar>
     <scroll
