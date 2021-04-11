@@ -8,6 +8,7 @@
       >
       </cart-list-item>
     </scroll>
+    <cart-button />
   </div>
 </template>
 
@@ -15,11 +16,13 @@
 import { mapGetters } from "vuex";
 import Scroll from "components/common/scroll/scroll";
 import CartListItem from "./CartListItem.vue";
+import CartButton from "./CartButton.vue";
 export default {
   name: "CartList",
   components: {
     Scroll,
     CartListItem,
+    CartButton,
   },
   computed: {
     ...mapGetters(["cartList"]),
@@ -32,7 +35,7 @@ export default {
 
 <style  scoped>
 .cart-list {
-  height: calc(100% - 44px - 49px);
+  height: calc(100% - 44px - 49px - 40px);
 }
 .content {
   overflow: hidden;

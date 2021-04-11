@@ -47,6 +47,7 @@ import {
 } from "network/detail.js";
 import { itemListenerMixin, backTopMixin } from "../../common/mixin";
 import { debounce } from "../../common/utils";
+import { mapActions } from "vuex";
 
 export default {
   name: "Detail",
@@ -62,7 +63,9 @@ export default {
     GoodsList,
     DetailBottomBar,
   },
+
   mixins: [itemListenerMixin, backTopMixin],
+
   data() {
     return {
       iid: null,
@@ -124,6 +127,7 @@ export default {
   },
 
   methods: {
+    ...mapActions(["addCart"]),
     imageLoad() {
       this.$refs.scroll.refresh();
       this.getThemeTopY();
@@ -164,7 +168,9 @@ export default {
       product.price = this.goods.realPrice;
       product.iid = this.$route.params.iid;
       // this.$store.commit("addCart", product);
-      this.$store.dispatch("addCart", product);
+      this.addCart(product).then((res) => {
+        this.$toast.show(res, 2000);
+      });
     },
   },
 

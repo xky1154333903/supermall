@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="check-button"
-    :class="{ check: isChecked }"
-  >
+  <div class="check-button" :class="{ check: isChecked }">
     <img src="~assets/img/cart/tick.svg" alt="" />
   </div>
 </template>
@@ -26,6 +23,6 @@ export default {
 }
 .check {
   border-color: #fb7299;
-  background-color:  #fb7299;
+  background-color: #fb7299;
 }
 </style>
