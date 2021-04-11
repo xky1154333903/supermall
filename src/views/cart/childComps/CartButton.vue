@@ -60,6 +60,8 @@ export default {
     calcClick() {
       if (!this.isSelectAll) {
         this.$toast.show("请选择购买的商品", 2000);
+      } else {
+        this.$toast.show("商品结算", 2000);
       }
     },
   },
